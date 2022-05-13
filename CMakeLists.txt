@@ -72,6 +72,7 @@ add_subdirectory(src/storage)
 add_subdirectory(src/tracer)
 add_subdirectory(src/display)
 add_subdirectory(src/logging)
+add_subdirectory(src/qtgui)
 
 # Add exectable and link all static libraries.
 #add_executable(procmon src/procmon.cpp)

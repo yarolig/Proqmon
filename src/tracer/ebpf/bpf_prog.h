@@ -159,6 +159,9 @@ const std::string bpf_prog = R"(
             {
                 break;
             }
+            if (i==3) {
+                continue;
+            }
 
             if(name[i]!=procmon[i])
             {
