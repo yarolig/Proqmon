@@ -44,6 +44,9 @@ INITIALIZE_EASYLOGGINGPP
 #include <QTableWidget>
 #include <QTimer>
 
+
+#include "monitorwindow.h"
+
 class TimerView : public QWidget  {
     Q_OBJECT
 
@@ -67,6 +70,8 @@ public:
     QAction* networkAct;
     QAction* processAct;
     QAction* profilingAct;
+
+    QSet<QString> syscalls_to_show;
 
 
     explicit TimerView(QWidget *parent, std::shared_ptr<ProcmonConfiguration> configPtr)
@@ -135,7 +140,7 @@ public:
         row++;
 
         QTimer* timer = new QTimer(this);
-        timer->setInterval(1000);
+        timer->setInterval(100);
         timer->setSingleShot(false);
 
         connect(timer, SIGNAL(timeout()), this, SLOT(on_timer()));
@@ -242,8 +247,13 @@ public Q_SLOTS:
         pos = 0;
         for(int i = std::max<int>(0, newEventList.size()-1000000); i < newEventList.size(); i++)
         {
-            tw->insertRow(pos);
+
             auto& lineData = newEventList[pos];
+            //if (!syscalls_to_show.contains(QString(lineData.syscall.c_str()))) {
+            //    continue;
+            //}
+            tw->insertRow(pos);
+
             EventFormatter* format = GetFormatter(newEventList[pos]);
             if(format == NULL)
             {
@@ -266,7 +276,8 @@ public Q_SLOTS:
             tw->setItem(pos, 3, new QTableWidgetItem(newEventList[pos].syscall.c_str()));
             tw->setItem(pos, 4, new QTableWidgetItem("/dev/stdout"));
             tw->setItem(pos, 5, new QTableWidgetItem(QString("%1").arg(newEventList[pos].result)));
-            tw->setItem(pos, 6, new QTableWidgetItem(format->GetDetails(newEventList[pos]).c_str()));
+            // It crashes.
+            //tw->setItem(pos, 6, new QTableWidgetItem(format->GetDetails(newEventList[pos]).c_str()));
 
 
             pos++;
@@ -277,7 +288,6 @@ public Q_SLOTS:
         if (autoscrollAct->isChecked()) {
             tw->scrollToBottom();
         }
-
     }
 private:
     QTableWidget* tw;
@@ -289,22 +299,29 @@ private:
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-
+    // It is not just config.
+    // The important stuff is launched there.
     auto configPtr = std::make_shared<ProcmonConfiguration>(argc, argv);
 
     qDebug() << "Tracing " << configPtr->events.size() << " system calls";
     el::Configurations defaultConf;
     defaultConf.setToDefault();
 
-
-
     qDebug()  << "Starting main UI thread";
+
+    MonitorWindow *mv = new MonitorWindow();
+    mv->show();
+    return a.exec();
+
+    TimerView* ttv = new TimerView(nullptr, configPtr);
+
     qDebug()  << "Tracing Events:" << configPtr->events.size();
     for (auto&i:configPtr->events) {
         qDebug() << i.Name().c_str();
     }
-
-    TimerView* ttv = new TimerView(nullptr, configPtr);
     ttv->show();
     return a.exec();
 }
+
+
+

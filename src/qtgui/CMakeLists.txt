@@ -6,7 +6,12 @@ set(CMAKE_AUTOUIC ON)
 
 add_executable(proqmon
     proqmon.cpp
-    mainwindow.ui)
+    #mainwindow.ui
+    monitorwindow.h monitorwindow.cpp monitorwindow.ui
+    #mainform.h mainform.cpp mainform.ui
+    #form.h form.cpp form.ui
+    res.qrc
+    )
 
 target_link_libraries(proqmon
   configuration-static

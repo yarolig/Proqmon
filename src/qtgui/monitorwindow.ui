@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MonitorWindow</class>
+ <widget class="QMainWindow" name="MonitorWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTableView" name="tableView">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>110</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="separator"/>
+    <addaction name="actionBackingfiles"/>
+    <addaction name="separator"/>
+    <addaction name="actionCaptureEvents"/>
+    <addaction name="separator"/>
+    <addaction name="actionImportconfiguration"/>
+    <addaction name="actionExportconfiguration"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionCopy"/>
+    <addaction name="actionFind"/>
+    <addaction name="actionFindHighlight"/>
+    <addaction name="actionFindBookmark"/>
+    <addaction name="separator"/>
+    <addaction name="actionAutoScroll"/>
+    <addaction name="separator"/>
+    <addaction name="actionClearDisplay"/>
+   </widget>
+   <widget class="QMenu" name="menuFilter">
+    <property name="title">
+     <string>F&amp;ilter</string>
+    </property>
+    <addaction name="actionEnableAdvancedOutput"/>
+    <addaction name="separator"/>
+    <addaction name="actionFilter"/>
+    <addaction name="actionResetFilter"/>
+    <addaction name="actionLoadFilter"/>
+    <addaction name="actionSaveFilter"/>
+    <addaction name="actionOrganizefilters"/>
+    <addaction name="separator"/>
+    <addaction name="actionDropFilteredEvents"/>
+    <addaction name="separator"/>
+    <addaction name="actionHighlight2"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionSystemDetails"/>
+    <addaction name="separator"/>
+    <addaction name="actionProcessTree"/>
+    <addaction name="separator"/>
+    <addaction name="actionProcessActivitySummary"/>
+    <addaction name="actionFileSummary"/>
+    <addaction name="actionRegistrySummary"/>
+    <addaction name="actionStackSummary"/>
+    <addaction name="actionNetworkSummary"/>
+    <addaction name="actionCrossReferenceSummary"/>
+    <addaction name="separator"/>
+    <addaction name="actionCountOccurences"/>
+   </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>&amp;Options</string>
+    </property>
+    <addaction name="actionAlwaysonTop"/>
+    <addaction name="separator"/>
+    <addaction name="actionFont"/>
+    <addaction name="actionHighlightColors"/>
+    <addaction name="actionTheme"/>
+    <addaction name="separator"/>
+    <addaction name="actionConfigureSymbols"/>
+    <addaction name="actionSelectColumns"/>
+    <addaction name="separator"/>
+    <addaction name="actionHistoryDepth"/>
+    <addaction name="actionProfilingEvents"/>
+    <addaction name="separator"/>
+    <addaction name="actionEnableBootLogging"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowResolvedNetworkAddresses"/>
+    <addaction name="actionHexFileOffsetandLengths"/>
+    <addaction name="actionHexProcessandThreadIDs"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionHelp"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionProperties"/>
+    <addaction name="actionStack"/>
+    <addaction name="actionToggleBookmark"/>
+    <addaction name="actionJumpTo"/>
+    <addaction name="separator"/>
+    <addaction name="actionInclude"/>
+    <addaction name="actionExclude"/>
+    <addaction name="separator"/>
+    <addaction name="actionHighlight"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuFilter"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuOptions"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="separator"/>
+   <addaction name="actionCaptureEvents"/>
+   <addaction name="actionAutoScroll"/>
+   <addaction name="actionClearDisplay"/>
+   <addaction name="separator"/>
+   <addaction name="actionFilter"/>
+   <addaction name="actionHighlight"/>
+  </widget>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset theme="document-open"/>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionBackingfiles">
+   <property name="text">
+    <string>Backing files</string>
+   </property>
+  </action>
+  <action name="actionCaptureEvents">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Capture events</string>
+   </property>
+   <property name="iconText">
+    <string>Capture</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionImportconfiguration">
+   <property name="text">
+    <string>Import configuration</string>
+   </property>
+  </action>
+  <action name="actionExportconfiguration">
+   <property name="text">
+    <string>Export configuration</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset theme="application-exit">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="icon">
+    <iconset theme="action-copy">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="text">
+    <string>&amp;Find...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionFindHighlight">
+   <property name="text">
+    <string>FInd &amp;Highlight</string>
+   </property>
+  </action>
+  <action name="actionFindBookmark">
+   <property name="text">
+    <string>Find &amp;Bookmark</string>
+   </property>
+  </action>
+  <action name="actionAutoScroll">
+   <property name="text">
+    <string>&amp;Auto Scroll</string>
+   </property>
+   <property name="iconText">
+    <string>Scroll</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionClearDisplay">
+   <property name="text">
+    <string>C&amp;lear Display</string>
+   </property>
+   <property name="iconText">
+    <string>Clear</string>
+   </property>
+  </action>
+  <action name="actionProperties">
+   <property name="text">
+    <string>Properties...</string>
+   </property>
+  </action>
+  <action name="actionStack">
+   <property name="text">
+    <string>Stac&amp;k...</string>
+   </property>
+  </action>
+  <action name="actionToggleBookmark">
+   <property name="text">
+    <string>Toggle &amp;Bookmark</string>
+   </property>
+  </action>
+  <action name="actionJumpTo">
+   <property name="text">
+    <string>Jump To...</string>
+   </property>
+  </action>
+  <action name="actionInclude">
+   <property name="text">
+    <string>Include</string>
+   </property>
+  </action>
+  <action name="actionExclude">
+   <property name="text">
+    <string>Exclude</string>
+   </property>
+  </action>
+  <action name="actionHighlight">
+   <property name="text">
+    <string>Highlight</string>
+   </property>
+  </action>
+  <action name="actionEnableAdvancedOutput">
+   <property name="text">
+    <string>Enable &amp;Advanced Output</string>
+   </property>
+  </action>
+  <action name="actionFilter">
+   <property name="text">
+    <string>Filter</string>
+   </property>
+  </action>
+  <action name="actionResetFilter">
+   <property name="text">
+    <string>Reset Filter</string>
+   </property>
+  </action>
+  <action name="actionLoadFilter">
+   <property name="text">
+    <string>Load Filter</string>
+   </property>
+  </action>
+  <action name="actionSaveFilter">
+   <property name="text">
+    <string>Save Filter...</string>
+   </property>
+  </action>
+  <action name="actionOrganizefilters">
+   <property name="text">
+    <string>Organize filters</string>
+   </property>
+  </action>
+  <action name="actionDropFilteredEvents">
+   <property name="text">
+    <string>Drop Filtered Events</string>
+   </property>
+  </action>
+  <action name="actionHighlight2">
+   <property name="text">
+    <string>Highlight...</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help...</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About...</string>
+   </property>
+  </action>
+  <action name="actionAlwaysonTop">
+   <property name="text">
+    <string>Always on &amp;Top</string>
+   </property>
+  </action>
+  <action name="actionFont">
+   <property name="text">
+    <string>Fo&amp;nt...</string>
+   </property>
+  </action>
+  <action name="actionHighlightColors">
+   <property name="text">
+    <string>Highlight &amp;Colors</string>
+   </property>
+  </action>
+  <action name="actionTheme">
+   <property name="text">
+    <string>&amp;Theme</string>
+   </property>
+  </action>
+  <action name="actionConfigureSymbols">
+   <property name="text">
+    <string>Configure Symbols</string>
+   </property>
+  </action>
+  <action name="actionSelectColumns">
+   <property name="text">
+    <string>Select Columns...</string>
+   </property>
+  </action>
+  <action name="actionHistoryDepth">
+   <property name="text">
+    <string>&amp;History Depth...</string>
+   </property>
+  </action>
+  <action name="actionProfilingEvents">
+   <property name="text">
+    <string>&amp;Profiling Events...</string>
+   </property>
+  </action>
+  <action name="actionEnableBootLogging">
+   <property name="text">
+    <string>Enable &amp;Boot Logging</string>
+   </property>
+  </action>
+  <action name="actionShowResolvedNetworkAddresses">
+   <property name="text">
+    <string>Show &amp;Resolved Network Addresses</string>
+   </property>
+  </action>
+  <action name="actionHexFileOffsetandLengths">
+   <property name="text">
+    <string>Hex File Offset and Lengths</string>
+   </property>
+  </action>
+  <action name="actionHexProcessandThreadIDs">
+   <property name="text">
+    <string>Hex Process and Thread IDs</string>
+   </property>
+  </action>
+  <action name="actionSystemDetails">
+   <property name="text">
+    <string>System Details...</string>
+   </property>
+  </action>
+  <action name="actionProcessTree">
+   <property name="text">
+    <string>Process Tree..</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionProcessActivitySummary">
+   <property name="text">
+    <string>Process Activity Summary...</string>
+   </property>
+  </action>
+  <action name="actionFileSummary">
+   <property name="text">
+    <string>File Summary...</string>
+   </property>
+  </action>
+  <action name="actionRegistrySummary">
+   <property name="text">
+    <string>Registry Summary...</string>
+   </property>
+  </action>
+  <action name="actionStackSummary">
+   <property name="text">
+    <string>Stack Summary...</string>
+   </property>
+  </action>
+  <action name="actionNetworkSummary">
+   <property name="text">
+    <string>Network Summary...</string>
+   </property>
+  </action>
+  <action name="actionCrossReferenceSummary">
+   <property name="text">
+    <string>Cross Reference Summary...</string>
+   </property>
+  </action>
+  <action name="actionCountOccurences">
+   <property name="text">
+    <string>Count Occurences...</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
