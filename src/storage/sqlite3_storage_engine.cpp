@@ -97,6 +97,9 @@ bool Sqlite3StorageEngine::Initialize(const std::vector<Event>& syscalls)
     if (rc != SQLITE_OK)
         return false;
 
+    char* err;
+    rc = sqlite3_exec(dbConnection, "CREATE INDEX ebpfi ON ebpf (timestamp ASC);", 0, 0, &err);
+
     // Create metadata table for traces
     rc = sqlite3_exec(dbConnection, SQL_CREATE_METADATA, 0, 0, nullptr);
     if (rc != SQLITE_OK)

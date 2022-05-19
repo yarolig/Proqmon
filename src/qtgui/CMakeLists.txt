@@ -6,10 +6,9 @@ set(CMAKE_AUTOUIC ON)
 
 add_executable(proqmon
     proqmon.cpp
-    #mainwindow.ui
     monitorwindow.h monitorwindow.cpp monitorwindow.ui
-    #mainform.h mainform.cpp mainform.ui
-    #form.h form.cpp form.ui
+    filterwindow.h filterwindow.cpp filterwindow.ui
+    aboutwidget.h aboutwidget.cpp aboutwidget.ui
     res.qrc
     )
 

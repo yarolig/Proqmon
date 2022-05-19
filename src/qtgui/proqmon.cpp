@@ -46,6 +46,7 @@ INITIALIZE_EASYLOGGINGPP
 
 
 #include "monitorwindow.h"
+#include "filterwindow.h"
 
 class TimerView : public QWidget  {
     Q_OBJECT
@@ -296,6 +297,13 @@ private:
 #include "proqmon.moc"
 
 
+namespace FilterWindowPrivate {
+    struct FilterWindowParams {
+        ProcmonConfiguration * config;
+        IStorageEngine* storageEngine;
+    };
+}
+
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
@@ -309,17 +317,26 @@ int main(int argc, char *argv[]) {
 
     qDebug()  << "Starting main UI thread";
 
-    MonitorWindow *mv = new MonitorWindow();
-    mv->show();
-    return a.exec();
+    //MonitorWindow *mv = new MonitorWindow();
+    //mv->show();
+    //return a.exec();
 
-    TimerView* ttv = new TimerView(nullptr, configPtr);
+    int aaa = 1;
+    if (aaa==1) {
+        FilterWindowPrivate::FilterWindowParams p;
+        p.config = configPtr.get();
+        p.storageEngine = p.config->GetStorage().get();
+        MonitorWindow *mv = new MonitorWindow(nullptr, p);
+        mv->show();
+    } else if (aaa==2) {
+        TimerView* ttv = new TimerView(nullptr, configPtr);
+        ttv->show();
+    }
 
     qDebug()  << "Tracing Events:" << configPtr->events.size();
     for (auto&i:configPtr->events) {
-        qDebug() << i.Name().c_str();
+       // qDebug() << i.Name().c_str();
     }
-    ttv->show();
     return a.exec();
 }
 
