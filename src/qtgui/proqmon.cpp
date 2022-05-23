@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include <iostream>
+#include <iomanip>
 #include <version.h>
 
 #include "configuration/procmon_configuration.h"
@@ -304,6 +305,186 @@ namespace FilterWindowPrivate {
     };
 }
 
+
+
+
+int FindSyscall(std::string& syscallName, ProcmonConfiguration * config) {
+    std::vector<struct SyscallSchema::SyscallSchema>& schema = config->GetSchema();
+
+    int i = 0;
+    for(auto& syscall : schema)
+    {
+        if(syscallName.compare(syscall.syscallName)==0)
+        {
+            return i;
+        }
+        i++;
+    }
+
+    return -1;
+}
+
+
+
+struct ParseBuffer {
+    struct ParseException {};
+    int pos = 0;
+    unsigned char * data;
+    int len;
+    ParseBuffer(unsigned char* data_, int len_)
+        : data(data_)
+        , len(len_)
+    {
+    }
+
+    template<typename T>
+    T read() {
+        T result;
+        int t_size = sizeof(T);
+        if (pos + t_size <= len) {
+            throw ParseException();
+        }
+        result = *(T*)&data[pos];
+        pos += t_size;
+        return result;
+    }
+};
+
+
+std::string MyFormatter(ITelemetry &event, ProcmonConfiguration * config) {
+    std::string args = "";
+
+    std::vector<struct SyscallSchema::SyscallSchema>& schema = config->GetSchema();
+
+    // Find the schema item
+    int index = FindSyscall(event.syscall, config);
+    SyscallSchema::SyscallSchema item = schema[index];
+    ParseBuffer pb(event.arguments, );
+
+    int readOffset = 0;
+    for(int i=0; i<item.usedArgCount; i++)
+    {
+        args+=item.argNames[i];
+        args+="=";
+
+        if(item.types[i]==SyscallSchema::ArgTag::INT || item.types[i]==SyscallSchema::ArgTag::LONG)
+        {
+            long val = 0;
+            int size = sizeof(long);
+            memcpy(&val, event.arguments+readOffset, size);
+            args+=std::to_string(val);
+            readOffset+=size;
+        }
+        else if(item.types[i]==SyscallSchema::ArgTag::UINT32)
+        {
+            uint32_t val = 0;
+            int size = sizeof(uint32_t);
+            memcpy(&val, event.arguments+readOffset, size);
+            args+=std::to_string(val);
+            readOffset+=size;
+        }
+        else if (item.types[i] == SyscallSchema::ArgTag::UNSIGNED_INT || item.types[i] == SyscallSchema::ArgTag::UNSIGNED_LONG || item.types[i] == SyscallSchema::ArgTag::SIZE_T || item.types[i] == SyscallSchema::ArgTag::PID_T)
+        {
+            unsigned long val = 0;
+            int size = sizeof(unsigned long);
+            memcpy(&val, event.arguments+readOffset, size);
+            args+=std::to_string(val);
+            readOffset+=size;
+        }
+        else if (item.types[i] == SyscallSchema::ArgTag::CHAR_PTR || item.types[i] == SyscallSchema::ArgTag::CONST_CHAR_PTR)
+        {
+            if(event.syscall.compare("read") == 0)
+            {
+                args += "{in}";
+            }
+            else if (event.syscall.compare("write") == 0)
+            {
+                int size = MAX_BUFFER / 6;
+                std::stringstream ss;
+
+                // check to see if our preview buffer is larger then result of write
+                if(size > event.result)
+                {
+                    size = event.result;
+                }
+
+                uint8_t buff[size];
+                memcpy(buff, event.arguments + readOffset, size);
+                readOffset += size;
+
+                for(int i = 0; i < size; i++)
+                {
+                    ss << std::setfill('0') << std::setw(2) << std::hex << (uint32_t)buff[i] << " ";
+                }
+
+                args += ss.str();
+            }
+            else
+            {
+                int size = MAX_BUFFER / 6;
+                uint8_t buff[size];
+                std::stringstream ss;
+
+
+                memcpy(buff, event.arguments + readOffset, size);
+                readOffset += size;
+
+                for(int i = 0; i < size; i++)
+                {
+                    ss << std::hex << (uint32_t)buff[i] << " ";
+                }
+                args += ss.str();
+            }
+        }
+        else if (item.types[i] == SyscallSchema::ArgTag::FD)
+        {
+            int size=MAX_BUFFER/6;
+            char buff[size];
+            memcpy(buff, event.arguments+readOffset, size);
+            readOffset+=size;
+            args+=buff;
+        }
+        else if (item.types[i] == SyscallSchema::ArgTag::PTR)
+        {
+            unsigned long val = 0;
+            int size = sizeof(unsigned long);
+            memcpy(&val, event.arguments+readOffset, size);
+            if(val==0)
+            {
+                args+="NULL";
+            }
+            else
+            {
+                args+="0x";
+                std::stringstream ss;
+                ss << std::hex << val;
+                args+=ss.str();
+            }
+            readOffset+=size;
+
+        }
+        else
+        {
+            args+="{}";
+        }
+
+        args+="  ";
+    }
+
+    return args;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
@@ -321,7 +502,7 @@ int main(int argc, char *argv[]) {
     //mv->show();
     //return a.exec();
 
-    int aaa = 1;
+    int aaa = 3;
     if (aaa==1) {
         FilterWindowPrivate::FilterWindowParams p;
         p.config = configPtr.get();
@@ -331,7 +512,33 @@ int main(int argc, char *argv[]) {
     } else if (aaa==2) {
         TimerView* ttv = new TimerView(nullptr, configPtr);
         ttv->show();
+    } else {
+
+        FilterWindowPrivate::FilterWindowParams p;
+        p.config = configPtr.get();
+        p.storageEngine = p.config->GetStorage().get();
+
+        sleep(1);
+        for (int a = 0; a < 10000;a++){
+            auto vec = p.storageEngine->QueryByEventsinPage(
+                                    p.config->pids,
+                                    0,
+                                    1000,
+                                    ScreenConfiguration::time,
+                                    true
+                                    );
+            if (vec.size() > 10) {
+                for (auto& e: vec) {
+                    if (e.syscall == "write") {
+                        qDebug() << e.syscall.c_str() << MyFormatter(e, p.config).c_str();
+                    }
+                }
+                return 0;
+            }
+        }
     }
+
+    return 0;
 
     qDebug()  << "Tracing Events:" << configPtr->events.size();
     for (auto&i:configPtr->events) {
